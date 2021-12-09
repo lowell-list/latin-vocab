@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Latin Vocab!</title>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <!-- Don't use this in production: -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.1/papaparse.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      /** Main component */
+      const Main = (props) => {
+        // state
+        const [vocab, setVocab] = React.useState([]);
+        const [currentIndex, setCurrentIndex] = React.useState(0);
+        const [showEnglish, setShowEnglish] = React.useState(false);
+
+        // data
+        const beginIndex = 0;
+        const endIndex = vocab.length > 0 ? vocab.length - 1 : 0;
+
+        // load Latin vocab CSV file at startup
+        React.useEffect(() => {
+          const url = "./Latin Vocabulary - Vocab.csv";
+          fetch(url)
+            .then(function (response) {
+              console.log(url + " -> " + response.ok);
+              if (response.ok) {
+                return response.text();
+              }
+              throw new Error("Error message.");
+            })
+            .then(
+              function (data) {
+                // parse CSV file
+                const results = Papa.parse(data, { header: true }); // object with { data, errors, meta }
+                console.log(results);
+                setVocab(results.data);
+              }.bind(this)
+            )
+            .catch(function (err) {
+              console.log("failed to load ", url, err.message);
+            });
+        }, []);
+
+        // safely clamp array index
+        const clampIndex = (newIndex) => {
+          if (newIndex < 0) return 0;
+          if (newIndex > vocab.length) return vocab.length - 1;
+          return newIndex;
+        };
+
+        // click handler
+        const onBeginningClick = (number) => {
+          setCurrentIndex(0);
+        };
+
+        // click handler
+        const onPreviousClick = (number) => {
+          setCurrentIndex(clampIndex(currentIndex - number));
+        };
+
+        // click handler
+        const onNextClick = (number) => {
+          setCurrentIndex(clampIndex(currentIndex + number));
+        };
+
+        // click handler
+        const onEndClick = (number) => {
+          setCurrentIndex(vocab.length - 1);
+        };
+
+        // click handler
+        const onShowHideClick = () => {
+          setShowEnglish(!showEnglish);
+        };
+
+        // render page content!
+        return (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {"index: " + currentIndex}
+              <Card line={vocab[currentIndex]} showDetails={showEnglish} />
+              <div>
+                <Button
+                  disabled={currentIndex === beginIndex}
+                  onClick={onBeginningClick}
+                >
+                  {"| <"}
+                </Button>
+                <Button
+                  disabled={currentIndex < 10}
+                  onClick={() => onPreviousClick(10)}
+                >
+                  {"<- 10"}
+                </Button>
+                <Button
+                  disabled={currentIndex === beginIndex}
+                  onClick={() => onPreviousClick(1)}
+                >
+                  Previous
+                </Button>
+                <Button
+                  style={{ backgroundColor: "yellow" }}
+                  onClick={onShowHideClick}
+                >
+                  {showEnglish ? "Hide" : "Show"}
+                </Button>
+                <Button
+                  disabled={currentIndex >= endIndex}
+                  onClick={() => onNextClick(1)}
+                >
+                  Next
+                </Button>
+                <Button
+                  disabled={currentIndex > endIndex - 10}
+                  onClick={() => onNextClick(10)}
+                >
+                  {"10 ->"}
+                </Button>
+                <Button
+                  disabled={currentIndex >= endIndex}
+                  onClick={onEndClick}
+                >
+                  {"> |"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      const Button = (props) => {
+        return (
+          <button
+            {...props}
+            style={{
+              ...props.style,
+              margin: 10,
+              padding: 10,
+              fontSize: 20,
+            }}
+          >
+            {props.children}
+          </button>
+        );
+      };
+
+      const Card = (props) => {
+        const { line, showDetails = false } = props;
+        if (!line) {
+          return null;
+        }
+        return (
+          <div
+            style={{
+              textAlign: "center",
+              minHeight: 400,
+            }}
+          >
+            <h1 style={{ fontSize: 50 }}>{line.Latin}</h1>
+            <h2 style={{ fontStyle: "italic" }}>
+              {showDetails ? line.English : ""}
+            </h2>
+            <h2 style={{ fontStyle: "italic" }}>
+              {showDetails
+                ? line["Part of Speech, Declension, Gender, etc."]
+                : ""}
+            </h2>
+            <h2 style={{ fontStyle: "italic" }}>
+              {showDetails ? line["Special"] : ""}
+            </h2>
+            <h2 style={{ fontStyle: "italic" }}>
+              {showDetails ? "Page: " + line["Page Number"] : ""}
+            </h2>
+          </div>
+        );
+      };
+
+      /** Render Main component */
+      ReactDOM.render(<Main />, document.getElementById("root"));
+    </script>
+  </body>
+</html>
