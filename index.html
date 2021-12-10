@@ -17,11 +17,8 @@
         // state
         const [vocab, setVocab] = React.useState([]);
         const [currentIndex, setCurrentIndex] = React.useState(0);
-        const [showEnglish, setShowEnglish] = React.useState(false);
-
-        // data
-        const beginIndex = 0;
-        const endIndex = vocab.length > 0 ? vocab.length - 1 : 0;
+        const [showFlashcard, setShowFlashcard] = React.useState(true);
+        const [showList, setShowList] = React.useState(false);
 
         // load Latin vocab CSV file at startup
         React.useEffect(() => {
@@ -46,6 +43,73 @@
               console.log("failed to load ", url, err.message);
             });
         }, []);
+
+        // render page content!
+        return (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+          >
+            {/* FlashCard Section */}
+            <div>
+              <button onClick={() => setShowFlashcard(!showFlashcard)}>
+                {(showFlashcard ? "Hide" : "Show") + " Flashcard"}
+              </button>
+              {!!showFlashcard && (
+                <FlashCard
+                  vocab={vocab}
+                  currentIndex={currentIndex}
+                  setCurrentIndex={setCurrentIndex}
+                />
+              )}
+            </div>
+
+            {/* List Section */}
+            <div>
+              <button onClick={() => setShowList(!showList)}>
+                {(showList ? "Hide" : "Show") + " List"}
+              </button>
+              {!!showList && (
+                <VocabList vocab={vocab} currentIndex={currentIndex} />
+              )}
+            </div>
+          </div>
+        );
+      };
+
+      /**
+       * VocabList component
+       */
+      const VocabList = (props) => {
+        // props
+        const { vocab = [], currentIndex } = props;
+
+        // render
+        return (
+          <div>
+            {vocab.map((vocabItem, index) => {
+              return <div key={index}>{vocabItem.Latin}</div>;
+            })}
+          </div>
+        );
+      };
+
+      /**
+       * FlashCard component
+       */
+      const FlashCard = (props) => {
+        // props
+        const { vocab, currentIndex, setCurrentIndex } = props;
+
+        // state
+        const [showEnglish, setShowEnglish] = React.useState(false);
+
+        // data
+        const beginIndex = 0;
+        const endIndex = vocab.length > 0 ? vocab.length - 1 : 0;
 
         // safely clamp array index
         const clampIndex = (newIndex) => {
@@ -79,73 +143,66 @@
           setShowEnglish(!showEnglish);
         };
 
-        // render page content!
+        // render
         return (
           <div
             style={{
               display: "flex",
+              flexDirection: "column",
               justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              {"index: " + currentIndex}
-              <Card line={vocab[currentIndex]} showDetails={showEnglish} />
-              <div>
-                <Button
-                  disabled={currentIndex === beginIndex}
-                  onClick={onBeginningClick}
-                >
-                  {"| <"}
-                </Button>
-                <Button
-                  disabled={currentIndex < 10}
-                  onClick={() => onPreviousClick(10)}
-                >
-                  {"<- 10"}
-                </Button>
-                <Button
-                  disabled={currentIndex === beginIndex}
-                  onClick={() => onPreviousClick(1)}
-                >
-                  Previous
-                </Button>
-                <Button
-                  style={{ backgroundColor: "yellow" }}
-                  onClick={onShowHideClick}
-                >
-                  {showEnglish ? "Hide" : "Show"}
-                </Button>
-                <Button
-                  disabled={currentIndex >= endIndex}
-                  onClick={() => onNextClick(1)}
-                >
-                  Next
-                </Button>
-                <Button
-                  disabled={currentIndex > endIndex - 10}
-                  onClick={() => onNextClick(10)}
-                >
-                  {"10 ->"}
-                </Button>
-                <Button
-                  disabled={currentIndex >= endIndex}
-                  onClick={onEndClick}
-                >
-                  {"> |"}
-                </Button>
-              </div>
+            {"index: " + currentIndex}
+            <Card line={vocab[currentIndex]} showDetails={showEnglish} />
+            <div>
+              <Button
+                disabled={currentIndex === beginIndex}
+                onClick={onBeginningClick}
+              >
+                {"| <"}
+              </Button>
+              <Button
+                disabled={currentIndex < 10}
+                onClick={() => onPreviousClick(10)}
+              >
+                {"<- 10"}
+              </Button>
+              <Button
+                disabled={currentIndex === beginIndex}
+                onClick={() => onPreviousClick(1)}
+              >
+                Previous
+              </Button>
+              <Button
+                style={{ backgroundColor: "yellow" }}
+                onClick={onShowHideClick}
+              >
+                {showEnglish ? "Hide" : "Show"}
+              </Button>
+              <Button
+                disabled={currentIndex >= endIndex}
+                onClick={() => onNextClick(1)}
+              >
+                Next
+              </Button>
+              <Button
+                disabled={currentIndex > endIndex - 10}
+                onClick={() => onNextClick(10)}
+              >
+                {"10 ->"}
+              </Button>
+              <Button disabled={currentIndex >= endIndex} onClick={onEndClick}>
+                {"> |"}
+              </Button>
             </div>
           </div>
         );
       };
 
+      /**
+       * Button component
+       */
       const Button = (props) => {
         return (
           <button
@@ -162,6 +219,9 @@
         );
       };
 
+      /**
+       * Card component
+       */
       const Card = (props) => {
         const { line, showDetails = false } = props;
         const h2Style = {
@@ -193,7 +253,7 @@
         );
       };
 
-      /** Render Main component */
+      /** Main Render! */
       ReactDOM.render(<Main />, document.getElementById("root"));
     </script>
   </body>
