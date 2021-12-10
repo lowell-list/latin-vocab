@@ -15,9 +15,12 @@
       /** Main component */
       const Main = (props) => {
         // state
-        const [vocab, setVocab] = React.useState([]);
-        const [fields, setFields] = React.useState([]);
-        const [currentIndex, setCurrentIndex] = React.useState(0);
+        const [fields, setFields] = React.useState([]); // data field names
+        const [vocab, setVocab] = React.useState([]); // data items
+        const [sortField, setSortField] = React.useState(""); // field to sort on
+        const [filteredSortedVocabIndices, setFilteredSortedVocabIndices] =
+          React.useState([]); // array of data item indices
+        const [currentIndex, setCurrentIndex] = React.useState(0); // current data item index
         const [showFlashcard, setShowFlashcard] = React.useState(true);
         const [showVocabList, setShowVocabList] = React.useState(true);
 
@@ -45,6 +48,12 @@
               console.log("failed to load ", url, err.message);
             });
         }, []);
+
+        React.useEffect(() => {
+          const fsvi = vocab.map((item, index) => index);
+          console.log(fsvi);
+          setFilteredSortedVocabIndices(fsvi);
+        }, [vocab.length, sortField]);
 
         // render page content!
         return (
@@ -82,6 +91,8 @@
                   fields={fields}
                   vocab={vocab}
                   currentIndex={currentIndex}
+                  sortField={sortField}
+                  setSortField={setSortField}
                 />
               )}
             </div>
@@ -197,22 +208,29 @@
        */
       const VocabList = (props) => {
         // props
-        const { fields, vocab, currentIndex } = props;
+        const { fields, vocab, currentIndex, sortField, setSortField } = props;
 
         // styles
-        const rowHeaderCellStyle = { flex: 1 };
+        const rowHeaderCellStyle = { flex: 1, cursor: "pointer" };
         const rowItemCellStyle = { flex: 1 };
         const englishCellStyle = { flex: 2 };
         const latinCellStyle = { flex: 2 };
+        const sortHeaderCellStyle = { fontWeight: "bold" };
 
-        const getFieldStyle = (fieldName, baseStyle) => {
+        const getFieldStyle = (fieldName) => {
           if (fieldName === "English") {
-            return { ...baseStyle, ...englishCellStyle };
+            return englishCellStyle;
           }
           if (fieldName === "Latin") {
-            return { ...baseStyle, ...latinCellStyle };
+            return latinCellStyle;
           }
-          return baseStyle;
+          return {};
+        };
+        const getSortHeaderStyle = (fieldName) => {
+          if (fieldName === sortField) {
+            return sortHeaderCellStyle;
+          }
+          return {};
         };
 
         // render
@@ -228,7 +246,12 @@
               {fields.map((field, index) => (
                 <div
                   key={index}
-                  style={getFieldStyle(field, rowHeaderCellStyle)}
+                  style={{
+                    ...rowHeaderCellStyle,
+                    ...getFieldStyle(field),
+                    ...getSortHeaderStyle(field),
+                  }}
+                  onClick={() => setSortField(field)}
                 >
                   {field}
                 </div>
@@ -249,7 +272,10 @@
                 {fields.map((field, fieldIndex) => (
                   <div
                     key={fieldIndex}
-                    style={getFieldStyle(field, rowItemCellStyle)}
+                    style={{
+                      ...rowItemCellStyle,
+                      ...getFieldStyle(field),
+                    }}
                   >
                     {item[field]}
                   </div>
