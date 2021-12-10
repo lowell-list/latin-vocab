@@ -16,9 +16,10 @@
       const Main = (props) => {
         // state
         const [vocab, setVocab] = React.useState([]);
+        const [fields, setFields] = React.useState([]);
         const [currentIndex, setCurrentIndex] = React.useState(0);
         const [showFlashcard, setShowFlashcard] = React.useState(true);
-        const [showVocabList, setShowVocabList] = React.useState(false);
+        const [showVocabList, setShowVocabList] = React.useState(true);
 
         // load Latin vocab CSV file at startup
         React.useEffect(() => {
@@ -37,6 +38,7 @@
                 const results = Papa.parse(data, { header: true }); // object with { data, errors, meta }
                 console.log(results);
                 setVocab(results.data);
+                setFields(results.meta.fields);
               }.bind(this)
             )
             .catch(function (err) {
@@ -73,7 +75,11 @@
                 {(showVocabList ? "Hide" : "Show") + " Vocab List"}
               </button>
               {!!showVocabList && (
-                <VocabList vocab={vocab} currentIndex={currentIndex} />
+                <VocabList
+                  fields={fields}
+                  vocab={vocab}
+                  currentIndex={currentIndex}
+                />
               )}
             </div>
           </div>
@@ -188,14 +194,61 @@
        */
       const VocabList = (props) => {
         // props
-        const { vocab = [], currentIndex } = props;
+        const { fields, vocab, currentIndex } = props;
+
+        // styles
+        const rowHeaderCellStyle = { flex: 1 };
+        const rowItemCellStyle = { flex: 1 };
+        const englishCellStyle = { flex: 2 };
+        const latinCellStyle = { flex: 2 };
+
+        const getStyle = (fieldName, baseStyle) => {
+          if (fieldName === "English") {
+            return { ...baseStyle, ...englishCellStyle };
+          }
+          if (fieldName === "Latin") {
+            return { ...baseStyle, ...latinCellStyle };
+          }
+          return baseStyle;
+        };
 
         // render
         return (
-          <div>
-            {vocab.map((vocabItem, index) => {
-              return <div key={index}>{vocabItem.Latin}</div>;
-            })}
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            {/* Header Row */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+              }}
+            >
+              {fields.map((field, index) => (
+                <div key={index} style={getStyle(field, rowHeaderCellStyle)}>
+                  {field}
+                </div>
+              ))}
+            </div>
+
+            {/* Item Rows */}
+            {vocab.map((item, itemIndex) => (
+              <div
+                key={itemIndex}
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  backgroundColor: itemIndex % 2 == 0 ? "white" : "AliceBlue",
+                }}
+              >
+                {fields.map((field, fieldIndex) => (
+                  <div
+                    key={fieldIndex}
+                    style={getStyle(field, rowItemCellStyle)}
+                  >
+                    {item[field]}
+                  </div>
+                ))}
+              </div>
+            ))}
           </div>
         );
       };
