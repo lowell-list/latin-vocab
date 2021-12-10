@@ -18,7 +18,7 @@
         const [vocab, setVocab] = React.useState([]);
         const [currentIndex, setCurrentIndex] = React.useState(0);
         const [showFlashcard, setShowFlashcard] = React.useState(true);
-        const [showList, setShowList] = React.useState(false);
+        const [showVocabList, setShowVocabList] = React.useState(false);
 
         // load Latin vocab CSV file at startup
         React.useEffect(() => {
@@ -67,32 +67,15 @@
               )}
             </div>
 
-            {/* List Section */}
+            {/* VocabList Section */}
             <div>
-              <button onClick={() => setShowList(!showList)}>
-                {(showList ? "Hide" : "Show") + " List"}
+              <button onClick={() => setShowVocabList(!showVocabList)}>
+                {(showVocabList ? "Hide" : "Show") + " Vocab List"}
               </button>
-              {!!showList && (
+              {!!showVocabList && (
                 <VocabList vocab={vocab} currentIndex={currentIndex} />
               )}
             </div>
-          </div>
-        );
-      };
-
-      /**
-       * VocabList component
-       */
-      const VocabList = (props) => {
-        // props
-        const { vocab = [], currentIndex } = props;
-
-        // render
-        return (
-          <div>
-            {vocab.map((vocabItem, index) => {
-              return <div key={index}>{vocabItem.Latin}</div>;
-            })}
           </div>
         );
       };
@@ -196,6 +179,23 @@
                 {"> |"}
               </Button>
             </div>
+          </div>
+        );
+      };
+
+      /**
+       * VocabList component
+       */
+      const VocabList = (props) => {
+        // props
+        const { vocab = [], currentIndex } = props;
+
+        // render
+        return (
+          <div>
+            {vocab.map((vocabItem, index) => {
+              return <div key={index}>{vocabItem.Latin}</div>;
+            })}
           </div>
         );
       };
