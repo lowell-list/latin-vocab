@@ -71,7 +71,10 @@
 
             {/* VocabList Section */}
             <div>
-              <button onClick={() => setShowVocabList(!showVocabList)}>
+              <button
+                onClick={() => setShowVocabList(!showVocabList)}
+                style={{ marginBottom: 10 }}
+              >
                 {(showVocabList ? "Hide" : "Show") + " Vocab List"}
               </button>
               {!!showVocabList && (
@@ -202,7 +205,7 @@
         const englishCellStyle = { flex: 2 };
         const latinCellStyle = { flex: 2 };
 
-        const getStyle = (fieldName, baseStyle) => {
+        const getFieldStyle = (fieldName, baseStyle) => {
           if (fieldName === "English") {
             return { ...baseStyle, ...englishCellStyle };
           }
@@ -223,7 +226,10 @@
               }}
             >
               {fields.map((field, index) => (
-                <div key={index} style={getStyle(field, rowHeaderCellStyle)}>
+                <div
+                  key={index}
+                  style={getFieldStyle(field, rowHeaderCellStyle)}
+                >
                   {field}
                 </div>
               ))}
@@ -237,12 +243,13 @@
                   display: "flex",
                   flexDirection: "row",
                   backgroundColor: itemIndex % 2 == 0 ? "white" : "AliceBlue",
+                  fontWeight: itemIndex === currentIndex ? "bold" : "normal",
                 }}
               >
                 {fields.map((field, fieldIndex) => (
                   <div
                     key={fieldIndex}
-                    style={getStyle(field, rowItemCellStyle)}
+                    style={getFieldStyle(field, rowItemCellStyle)}
                   >
                     {item[field]}
                   </div>
