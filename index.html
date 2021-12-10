@@ -124,21 +124,25 @@
         // click handler
         const onBeginningClick = (number) => {
           setCurrentIndex(0);
+          setShowEnglish(false);
         };
 
         // click handler
         const onPreviousClick = (number) => {
           setCurrentIndex(clampIndex(currentIndex - number));
+          setShowEnglish(false);
         };
 
         // click handler
         const onNextClick = (number) => {
           setCurrentIndex(clampIndex(currentIndex + number));
+          setShowEnglish(false);
         };
 
         // click handler
         const onEndClick = (number) => {
           setCurrentIndex(vocab.length - 1);
+          setShowEnglish(false);
         };
 
         // click handler
