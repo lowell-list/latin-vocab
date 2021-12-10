@@ -164,6 +164,10 @@
 
       const Card = (props) => {
         const { line, showDetails = false } = props;
+        const h2Style = {
+          fontStyle: "italic",
+          fontWeight: "normal",
+        };
         if (!line) {
           return null;
         }
@@ -175,20 +179,16 @@
             }}
           >
             <h1 style={{ fontSize: 50 }}>{line.Latin}</h1>
-            <h2 style={{ fontStyle: "italic" }}>
-              {showDetails ? line.English : ""}
-            </h2>
-            <h2 style={{ fontStyle: "italic" }}>
-              {showDetails
-                ? line["Part of Speech, Declension, Gender, etc."]
-                : ""}
-            </h2>
-            <h2 style={{ fontStyle: "italic" }}>
-              {showDetails ? line["Special"] : ""}
-            </h2>
-            <h2 style={{ fontStyle: "italic" }}>
-              {showDetails ? "Page: " + line["Page Number"] : ""}
-            </h2>
+            {showDetails && (
+              <div>
+                <h2 style={h2Style}>{line.English}</h2>
+                <h2 style={h2Style}>
+                  {line["Part of Speech, Declension, Gender, etc."]}
+                </h2>
+                <h2 style={h2Style}>{line.Special}</h2>
+                <h2 style={h2Style}>{"Page: " + line["Page Number"]}</h2>
+              </div>
+            )}
           </div>
         );
       };
