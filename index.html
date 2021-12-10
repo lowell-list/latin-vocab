@@ -215,7 +215,12 @@
         const { fields, vocab, currentIndex, sortField, setSortField } = props;
 
         // styles
-        const rowHeaderCellStyle = { flex: 1, cursor: "pointer" };
+        const rowHeaderCellStyle = {
+          flex: 1,
+          cursor: "pointer",
+          color: "blue",
+          textDecoration: "underline",
+        };
         const rowItemCellStyle = { flex: 1 };
         const englishCellStyle = { flex: 2 };
         const latinCellStyle = { flex: 2 };
