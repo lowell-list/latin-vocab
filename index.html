@@ -20,7 +20,8 @@
         const [sortField, setSortField] = React.useState(""); // field to sort on
         const [sortDirection, setSortDirection] = React.useState("ASC"); // ASC or DSC
         const [selectedIndices, setSelectedIndices] = React.useState([]); // array of data item indices
-        const [currentIndex, setCurrentIndex] = React.useState(0); // current data item index
+        const [currentSelectedIndex, setCurrentSelectedIndex] =
+          React.useState(0); // current index into selected indices
         const [showFlashcard, setShowFlashcard] = React.useState(true);
         const [showVocabList, setShowVocabList] = React.useState(false);
 
@@ -87,9 +88,21 @@
               </button>
               {!!showFlashcard && (
                 <FlashCard
-                  vocab={vocab}
-                  currentIndex={currentIndex}
-                  setCurrentIndex={setCurrentIndex}
+                  item={vocab[selectedIndices[currentSelectedIndex]]}
+                  previousDisabled={currentSelectedIndex <= 0}
+                  onPressPrevious={() => {
+                    if (currentSelectedIndex > 0) {
+                      setCurrentSelectedIndex(currentSelectedIndex - 1);
+                    }
+                  }}
+                  nextDisabled={
+                    currentSelectedIndex >= selectedIndices.length - 1
+                  }
+                  onPressNext={() => {
+                    if (currentSelectedIndex < selectedIndices.length - 1) {
+                      setCurrentSelectedIndex(currentSelectedIndex + 1);
+                    }
+                  }}
                 />
               )}
             </div>
@@ -106,8 +119,8 @@
                 <VocabList
                   fields={fields}
                   vocab={vocab}
-                  currentIndex={currentIndex}
                   selectedIndices={selectedIndices}
+                  currentSelectedIndex={currentSelectedIndex}
                   sortField={sortField}
                   setSortField={setSortField}
                   sortDirection={sortDirection}
@@ -124,50 +137,16 @@
        */
       const FlashCard = (props) => {
         // props
-        const { vocab, currentIndex, setCurrentIndex } = props;
+        const {
+          item,
+          previousDisabled,
+          onPressPrevious,
+          nextDisabled,
+          onPressNext,
+        } = props;
 
         // state
         const [showEnglish, setShowEnglish] = React.useState(false);
-
-        // data
-        const beginIndex = 0;
-        const endIndex = vocab.length > 0 ? vocab.length - 1 : 0;
-
-        // safely clamp array index
-        const clampIndex = (newIndex) => {
-          if (newIndex < 0) return 0;
-          if (newIndex > vocab.length) return vocab.length - 1;
-          return newIndex;
-        };
-
-        // click handler
-        const onBeginningClick = (number) => {
-          setCurrentIndex(0);
-          setShowEnglish(false);
-        };
-
-        // click handler
-        const onPreviousClick = (number) => {
-          setCurrentIndex(clampIndex(currentIndex - number));
-          setShowEnglish(false);
-        };
-
-        // click handler
-        const onNextClick = (number) => {
-          setCurrentIndex(clampIndex(currentIndex + number));
-          setShowEnglish(false);
-        };
-
-        // click handler
-        const onEndClick = (number) => {
-          setCurrentIndex(vocab.length - 1);
-          setShowEnglish(false);
-        };
-
-        // click handler
-        const onShowHideClick = () => {
-          setShowEnglish(!showEnglish);
-        };
 
         // render
         return (
@@ -179,47 +158,21 @@
               alignItems: "center",
             }}
           >
-            {"index: " + currentIndex}
-            <Card line={vocab[currentIndex]} showDetails={showEnglish} />
+            <Card item={item} showDetails={showEnglish} />
             <div>
-              <Button
-                disabled={currentIndex === beginIndex}
-                onClick={onBeginningClick}
-              >
-                {"| <"}
-              </Button>
-              <Button
-                disabled={currentIndex < 10}
-                onClick={() => onPreviousClick(10)}
-              >
-                {"<- 10"}
-              </Button>
-              <Button
-                disabled={currentIndex === beginIndex}
-                onClick={() => onPreviousClick(1)}
-              >
+              <Button disabled={previousDisabled} onClick={onPressPrevious}>
                 Previous
               </Button>
               <Button
                 style={{ backgroundColor: "yellow" }}
-                onClick={onShowHideClick}
+                onClick={() => {
+                  setShowEnglish(!showEnglish);
+                }}
               >
                 {showEnglish ? "Hide" : "Show"}
               </Button>
-              <Button
-                disabled={currentIndex >= endIndex}
-                onClick={() => onNextClick(1)}
-              >
+              <Button disabled={nextDisabled} onClick={onPressNext}>
                 Next
-              </Button>
-              <Button
-                disabled={currentIndex > endIndex - 10}
-                onClick={() => onNextClick(10)}
-              >
-                {"10 ->"}
-              </Button>
-              <Button disabled={currentIndex >= endIndex} onClick={onEndClick}>
-                {"> |"}
               </Button>
             </div>
           </div>
@@ -234,8 +187,8 @@
         const {
           fields,
           vocab,
-          currentIndex,
           selectedIndices,
+          currentSelectedIndex,
           sortField,
           setSortField,
           sortDirection,
@@ -318,7 +271,7 @@
                     backgroundColor:
                       displayIndex % 2 == 0 ? "white" : "AliceBlue",
                     fontWeight:
-                      selectedIndex === currentIndex ? "bold" : "normal",
+                      displayIndex === currentSelectedIndex ? "bold" : "normal",
                   }}
                 >
                   {fields.map((fieldName, fieldIndex) => (
@@ -362,12 +315,12 @@
        * Card component
        */
       const Card = (props) => {
-        const { line, showDetails = false } = props;
+        const { item, showDetails = false } = props;
         const h2Style = {
           fontStyle: "italic",
           fontWeight: "normal",
         };
-        if (!line) {
+        if (!item) {
           return null;
         }
         return (
@@ -377,15 +330,15 @@
               minHeight: 400,
             }}
           >
-            <h1 style={{ fontSize: 50 }}>{line.Latin}</h1>
+            <h1 style={{ fontSize: 50 }}>{item.Latin}</h1>
             {showDetails && (
               <div>
-                <h2 style={h2Style}>{line.English}</h2>
+                <h2 style={h2Style}>{item.English}</h2>
                 <h2 style={h2Style}>
-                  {line["Part of Speech, Declension, Gender, etc."]}
+                  {item["Part of Speech, Declension, Gender, etc."]}
                 </h2>
-                <h2 style={h2Style}>{line.Special}</h2>
-                <h2 style={h2Style}>{"Page: " + line["Page Number"]}</h2>
+                <h2 style={h2Style}>{item.Special}</h2>
+                <h2 style={h2Style}>{"Page: " + item["Page Number"]}</h2>
               </div>
             )}
           </div>
