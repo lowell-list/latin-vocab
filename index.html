@@ -214,32 +214,26 @@
         // props
         const { fields, vocab, currentIndex, sortField, setSortField } = props;
 
-        // styles
-        const rowHeaderCellStyle = {
-          flex: 1,
-          cursor: "pointer",
-          color: "blue",
-          textDecoration: "underline",
-        };
-        const rowItemCellStyle = { flex: 1 };
-        const englishCellStyle = { flex: 2 };
-        const latinCellStyle = { flex: 2 };
-        const sortHeaderCellStyle = { fontWeight: "bold" };
-
-        const getFieldStyle = (fieldName) => {
-          if (fieldName === "English") {
-            return englishCellStyle;
-          }
-          if (fieldName === "Latin") {
-            return latinCellStyle;
-          }
-          return {};
-        };
-        const getSortHeaderStyle = (fieldName) => {
-          if (fieldName === sortField) {
-            return sortHeaderCellStyle;
-          }
-          return {};
+        // cell styles
+        const cellStyles = {
+          rowHeader: {
+            flex: 1,
+            cursor: "pointer",
+            color: "blue",
+            textDecoration: "underline",
+          },
+          rowItem: {
+            flex: 1,
+          },
+          selectedSort: {
+            fontWeight: "bold",
+          },
+          English: {
+            flex: 2,
+          },
+          Latin: {
+            flex: 2,
+          },
         };
 
         // render
@@ -252,17 +246,17 @@
                 flexDirection: "row",
               }}
             >
-              {fields.map((field, index) => (
+              {fields.map((fieldName, fieldIndex) => (
                 <div
-                  key={index}
+                  key={fieldIndex}
                   style={{
-                    ...rowHeaderCellStyle,
-                    ...getFieldStyle(field),
-                    ...getSortHeaderStyle(field),
+                    ...cellStyles.rowHeader,
+                    ...cellStyles[fieldName],
+                    ...(fieldName === sortField ? cellStyles.selectedSort : {}),
                   }}
-                  onClick={() => setSortField(field)}
+                  onClick={() => setSortField(fieldName)}
                 >
-                  {field}
+                  {fieldName}
                 </div>
               ))}
             </div>
@@ -278,15 +272,15 @@
                   fontWeight: itemIndex === currentIndex ? "bold" : "normal",
                 }}
               >
-                {fields.map((field, fieldIndex) => (
+                {fields.map((fieldName, fieldIndex) => (
                   <div
                     key={fieldIndex}
                     style={{
-                      ...rowItemCellStyle,
-                      ...getFieldStyle(field),
+                      ...cellStyles.rowItem,
+                      ...cellStyles[fieldName],
                     }}
                   >
-                    {item[field]}
+                    {item[fieldName]}
                   </div>
                 ))}
               </div>
