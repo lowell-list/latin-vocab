@@ -434,7 +434,7 @@
           }
           const fieldName = fields[xa];
           const normalizedFieldValue = normalizeString(item[fieldName]);
-          if (normalizedFieldValue.includes(filterValue)) {
+          if (normalizedFieldValue.includes(filterValue.toLowerCase())) {
             return true;
           }
         }
