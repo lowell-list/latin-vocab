@@ -18,8 +18,8 @@
         const [fields, setFields] = React.useState([]); // data field names
         const [vocab, setVocab] = React.useState([]); // data items
         const [sortField, setSortField] = React.useState(""); // field to sort on
-        const [filteredSortedVocabIndices, setFilteredSortedVocabIndices] =
-          React.useState([]); // array of data item indices
+        const [sortDirection, setSortDirection] = React.useState("DSC"); // ASC or DSC
+        const [selectedIndices, setSelectedIndices] = React.useState([]); // array of data item indices
         const [currentIndex, setCurrentIndex] = React.useState(0); // current data item index
         const [showFlashcard, setShowFlashcard] = React.useState(true);
         const [showVocabList, setShowVocabList] = React.useState(false);
@@ -49,11 +49,26 @@
             });
         }, []);
 
+        // set selected indices (apply sorting and filtering)
         React.useEffect(() => {
-          const fsvi = vocab.map((item, index) => index);
-          console.log(fsvi);
-          setFilteredSortedVocabIndices(fsvi);
-        }, [vocab.length, sortField]);
+          const indices = vocab.map((item, index) => index);
+          const sortedIndices = !sortField
+            ? indices // no sort if sort field is not set
+            : indices.sort((indexA, indexB) => {
+                const stringA = normalizeString(vocab[indexA][sortField]);
+                const stringB = normalizeString(vocab[indexB][sortField]);
+                const valueA = hasOnlyDigits(stringA)
+                  ? parseInt(stringA)
+                  : stringA;
+                const valueB = hasOnlyDigits(stringB)
+                  ? parseInt(stringB)
+                  : stringB;
+                if (valueA < valueB) return sortDirection === "ASC" ? -1 : 1;
+                if (valueA > valueB) return sortDirection === "ASC" ? 1 : -1;
+                return 0;
+              });
+          setSelectedIndices(sortedIndices);
+        }, [vocab.length, sortField, sortDirection]);
 
         // render page content!
         return (
@@ -91,8 +106,11 @@
                   fields={fields}
                   vocab={vocab}
                   currentIndex={currentIndex}
+                  selectedIndices={selectedIndices}
                   sortField={sortField}
                   setSortField={setSortField}
+                  sortDirection={sortDirection}
+                  setSortDirection={setSortDirection}
                 />
               )}
             </div>
@@ -212,7 +230,16 @@
        */
       const VocabList = (props) => {
         // props
-        const { fields, vocab, currentIndex, sortField, setSortField } = props;
+        const {
+          fields,
+          vocab,
+          currentIndex,
+          selectedIndices,
+          sortField,
+          setSortField,
+          sortDirection,
+          setSortDirection,
+        } = props;
 
         // cell styles
         const cellStyles = {
@@ -254,7 +281,16 @@
                     ...cellStyles[fieldName],
                     ...(fieldName === sortField ? cellStyles.selectedSort : {}),
                   }}
-                  onClick={() => setSortField(fieldName)}
+                  onClick={() => {
+                    if (sortField !== fieldName) {
+                      setSortField(fieldName);
+                      setSortDirection("ASC");
+                    } else if (sortDirection === "ASC") {
+                      setSortDirection("DSC");
+                    } else {
+                      setSortDirection("ASC");
+                    }
+                  }}
                 >
                   {fieldName}
                 </div>
@@ -262,29 +298,34 @@
             </div>
 
             {/* Item Rows */}
-            {vocab.map((item, itemIndex) => (
-              <div
-                key={itemIndex}
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  backgroundColor: itemIndex % 2 == 0 ? "white" : "AliceBlue",
-                  fontWeight: itemIndex === currentIndex ? "bold" : "normal",
-                }}
-              >
-                {fields.map((fieldName, fieldIndex) => (
-                  <div
-                    key={fieldIndex}
-                    style={{
-                      ...cellStyles.rowItem,
-                      ...cellStyles[fieldName],
-                    }}
-                  >
-                    {item[fieldName]}
-                  </div>
-                ))}
-              </div>
-            ))}
+            {selectedIndices.map((selectedIndex, displayIndex) => {
+              const item = vocab[selectedIndex];
+              return (
+                <div
+                  key={displayIndex}
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    backgroundColor:
+                      displayIndex % 2 == 0 ? "white" : "AliceBlue",
+                    fontWeight:
+                      selectedIndex === currentIndex ? "bold" : "normal",
+                  }}
+                >
+                  {fields.map((fieldName, fieldIndex) => (
+                    <div
+                      key={fieldIndex}
+                      style={{
+                        ...cellStyles.rowItem,
+                        ...cellStyles[fieldName],
+                      }}
+                    >
+                      {item[fieldName]}
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
           </div>
         );
       };
@@ -342,7 +383,28 @@
         );
       };
 
-      /** Main Render! */
+      /**
+       * Utility
+       * -----------------------------------------------------------------------
+       */
+
+      /** Normalize a string by removing all accent chars and converting to lowercase */
+      function normalizeString(rawStringValue) {
+        return rawStringValue
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase();
+      }
+
+      /** Check if the given string has only digit characters */
+      function hasOnlyDigits(value) {
+        return /^\d+$/.test(value);
+      }
+
+      /**
+       * Main Render!
+       * -----------------------------------------------------------------------
+       */
       ReactDOM.render(<Main />, document.getElementById("root"));
     </script>
   </body>
