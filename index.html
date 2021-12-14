@@ -18,7 +18,7 @@
         const [fields, setFields] = React.useState([]); // data field names
         const [vocab, setVocab] = React.useState([]); // data items
         const [sortField, setSortField] = React.useState(""); // field to sort on
-        const [sortDirection, setSortDirection] = React.useState("DSC"); // ASC or DSC
+        const [sortDirection, setSortDirection] = React.useState("ASC"); // ASC or DSC
         const [selectedIndices, setSelectedIndices] = React.useState([]); // array of data item indices
         const [currentIndex, setCurrentIndex] = React.useState(0); // current data item index
         const [showFlashcard, setShowFlashcard] = React.useState(true);
@@ -42,6 +42,7 @@
                 console.log(results);
                 setVocab(results.data);
                 setFields(results.meta.fields);
+                setSortField(results.meta.fields[0]);
               }.bind(this)
             )
             .catch(function (err) {
