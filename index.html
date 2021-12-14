@@ -173,7 +173,13 @@
           >
             <Card item={item} showDetails={showEnglish} />
             <div>
-              <Button disabled={previousDisabled} onClick={onPressPrevious}>
+              <Button
+                disabled={previousDisabled}
+                onClick={() => {
+                  setShowEnglish(false);
+                  onPressPrevious();
+                }}
+              >
                 Previous
               </Button>
               <Button
@@ -184,7 +190,13 @@
               >
                 {showEnglish ? "Hide" : "Show"}
               </Button>
-              <Button disabled={nextDisabled} onClick={onPressNext}>
+              <Button
+                disabled={nextDisabled}
+                onClick={() => {
+                  setShowEnglish(false);
+                  onPressNext();
+                }}
+              >
                 Next
               </Button>
             </div>
