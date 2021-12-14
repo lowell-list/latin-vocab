@@ -25,7 +25,6 @@
         const [currentSelectedIndex, setCurrentSelectedIndex] =
           React.useState(0); // current index into selected indices
         const [fieldFilters, setFieldFilters] = React.useState(undefined);
-        console.log(fieldFilters);
 
         // load Latin vocab CSV file at startup
         React.useEffect(() => {
@@ -72,8 +71,12 @@
                 if (valueA > valueB) return sortDirection === "ASC" ? 1 : -1;
                 return 0;
               });
-          console.log(fieldFilters);
-          const filteredIndices = !fieldFilters ? sortedIndices : sortedIndices;
+          const filteredIndices = !areAnyFieldFiltersSet(fieldFilters)
+            ? sortedIndices
+            : sortedIndices.filter((selectedIndex) => {
+                const item = vocab[selectedIndex];
+                return filterItem(item, fields, fieldFilters);
+              });
 
           setSelectedIndices(filteredIndices);
         }, [vocab.length, sortField, sortDirection, fieldFilters]);
@@ -209,7 +212,7 @@
         const cellStyles = {
           rowFilter: {
             flex: 1,
-            minWidth: 10,
+            minWidth: 5,
             marginRight: 5,
           },
           rowHeader: {
@@ -405,6 +408,35 @@
       /** Check if the given string has only digit characters */
       function hasOnlyDigits(value) {
         return /^\d+$/.test(value);
+      }
+
+      /** Return true if any field filters are set */
+      function areAnyFieldFiltersSet(fieldFilters) {
+        if (!fieldFilters) {
+          return false;
+        }
+        for (const fieldFilter of fieldFilters) {
+          if (!!fieldFilter) {
+            return true; // one fieldFilter is set!
+          }
+        }
+        return false;
+      }
+
+      /** Return true if the item is included; false if the item is filtered out */
+      function filterItem(item, fields, fieldFilters) {
+        for (let xa = 0; xa < fields.length; ++xa) {
+          const filterValue = fieldFilters[xa];
+          if (!filterValue) {
+            continue;
+          }
+          const fieldName = fields[xa];
+          const normalizedFieldValue = normalizeString(item[fieldName]);
+          if (normalizedFieldValue.includes(filterValue)) {
+            return true;
+          }
+        }
+        return false;
       }
 
       /**
