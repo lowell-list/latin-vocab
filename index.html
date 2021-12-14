@@ -103,6 +103,8 @@
               {!!showFlashcard && (
                 <FlashCard
                   item={vocab[selectedIndices[currentSelectedIndex]]}
+                  beginDisabled={currentSelectedIndex <= 0}
+                  onPressBegin={() => setCurrentSelectedIndex(0)}
                   previousDisabled={currentSelectedIndex <= 0}
                   onPressPrevious={() => {
                     if (currentSelectedIndex > 0) {
@@ -117,6 +119,12 @@
                       setCurrentSelectedIndex(currentSelectedIndex + 1);
                     }
                   }}
+                  endDisabled={
+                    currentSelectedIndex >= selectedIndices.length - 1
+                  }
+                  onPressEnd={() =>
+                    setCurrentSelectedIndex(selectedIndices.length - 1)
+                  }
                 />
               )}
             </div>
@@ -155,10 +163,14 @@
         // props
         const {
           item,
+          beginDisabled,
+          onPressBegin,
           previousDisabled,
           onPressPrevious,
           nextDisabled,
           onPressNext,
+          endDisabled,
+          onPressEnd,
         } = props;
 
         // state
@@ -176,6 +188,17 @@
           >
             <Card item={item} showDetails={showEnglish} />
             <div>
+              {/* Begin Button */}
+              <Button
+                disabled={beginDisabled}
+                onClick={() => {
+                  setShowEnglish(false);
+                  onPressBegin();
+                }}
+              >
+                {"|<"}
+              </Button>
+              {/* Previous Button */}
               <Button
                 disabled={previousDisabled}
                 onClick={() => {
@@ -185,6 +208,7 @@
               >
                 Previous
               </Button>
+              {/* Show/Hide Button */}
               <Button
                 style={{ backgroundColor: "yellow" }}
                 onClick={() => {
@@ -193,6 +217,7 @@
               >
                 {showEnglish ? "Hide" : "Show"}
               </Button>
+              {/* Next Button */}
               <Button
                 disabled={nextDisabled}
                 onClick={() => {
@@ -201,6 +226,16 @@
                 }}
               >
                 Next
+              </Button>
+              {/* End Button */}
+              <Button
+                disabled={endDisabled}
+                onClick={() => {
+                  setShowEnglish(false);
+                  onPressEnd();
+                }}
+              >
+                {">|"}
               </Button>
             </div>
           </div>
