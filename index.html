@@ -71,13 +71,15 @@
                 if (valueA > valueB) return sortDirection === "ASC" ? 1 : -1;
                 return 0;
               });
-          const filteredIndices = !areAnyFieldFiltersSet(fieldFilters)
-            ? sortedIndices
-            : sortedIndices.filter((selectedIndex) => {
-                const item = vocab[selectedIndex];
-                return filterItem(item, fields, fieldFilters);
-              });
+          const filteredIndices =
+            activeFieldFilterCount(fieldFilters) <= 0
+              ? sortedIndices
+              : sortedIndices.filter((selectedIndex) => {
+                  const item = vocab[selectedIndex];
+                  return filterItem(item, fields, fieldFilters);
+                });
 
+          setCurrentSelectedIndex(0);
           setSelectedIndices(filteredIndices);
         }, [vocab.length, sortField, sortDirection, fieldFilters]);
 
@@ -410,17 +412,17 @@
         return /^\d+$/.test(value);
       }
 
-      /** Return true if any field filters are set */
-      function areAnyFieldFiltersSet(fieldFilters) {
+      /** Return the number of active field filters */
+      function activeFieldFilterCount(fieldFilters) {
         if (!fieldFilters) {
-          return false;
+          return 0;
         }
-        for (const fieldFilter of fieldFilters) {
-          if (!!fieldFilter) {
-            return true; // one fieldFilter is set!
+        return fieldFilters.reduce((counter, currentValue) => {
+          if (!!currentValue) {
+            return counter + 1;
           }
-        }
-        return false;
+          return counter;
+        }, 0);
       }
 
       /** Return true if the item is included; false if the item is filtered out */
