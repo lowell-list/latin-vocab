@@ -143,6 +143,7 @@
                   vocab={vocab}
                   selectedIndices={selectedIndices}
                   currentSelectedIndex={currentSelectedIndex}
+                  setCurrentSelectedIndex={setCurrentSelectedIndex}
                   sortField={sortField}
                   setSortField={setSortField}
                   sortDirection={sortDirection}
@@ -252,6 +253,7 @@
           vocab,
           selectedIndices,
           currentSelectedIndex,
+          setCurrentSelectedIndex,
           sortField,
           setSortField,
           sortDirection,
@@ -371,7 +373,9 @@
                       displayIndex % 2 == 0 ? "white" : "AliceBlue",
                     fontWeight:
                       displayIndex === currentSelectedIndex ? "bold" : "normal",
+                    cursor: "pointer",
                   }}
+                  onClick={() => setCurrentSelectedIndex(displayIndex)}
                 >
                   {fields.map((fieldName, fieldIndex) => (
                     <div

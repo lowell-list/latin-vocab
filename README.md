@@ -6,6 +6,6 @@
 TODO
 [X] show index again
 [X] put back End and Begin nav buttons
-[ ] click on row to select that row index
+[X] click on any row to select that row index
 [ ] clear All filters button
 [ ] filter AND logic
