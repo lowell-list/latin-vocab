@@ -273,28 +273,36 @@
                 flexDirection: "row",
               }}
             >
-              {fields.map((fieldName, fieldIndex) => (
-                <div
-                  key={fieldIndex}
-                  style={{
-                    ...cellStyles.rowHeader,
-                    ...cellStyles[fieldName],
-                    ...(fieldName === sortField ? cellStyles.selectedSort : {}),
-                  }}
-                  onClick={() => {
-                    if (sortField !== fieldName) {
-                      setSortField(fieldName);
-                      setSortDirection("ASC");
-                    } else if (sortDirection === "ASC") {
-                      setSortDirection("DSC");
-                    } else {
-                      setSortDirection("ASC");
-                    }
-                  }}
-                >
-                  {fieldName}
-                </div>
-              ))}
+              {fields.map((fieldName, fieldIndex) => {
+                const isSortField = fieldName === sortField;
+                const sortDisplayArrow = !isSortField
+                  ? "" // this is not the sort field
+                  : sortDirection === "ASC"
+                  ? "↓"
+                  : "↑";
+                return (
+                  <div
+                    key={fieldIndex}
+                    style={{
+                      ...cellStyles.rowHeader,
+                      ...cellStyles[fieldName],
+                      ...(isSortField ? cellStyles.selectedSort : {}),
+                    }}
+                    onClick={() => {
+                      if (!isSortField) {
+                        setSortField(fieldName);
+                        setSortDirection("ASC");
+                      } else if (sortDirection === "ASC") {
+                        setSortDirection("DSC");
+                      } else {
+                        setSortDirection("ASC");
+                      }
+                    }}
+                  >
+                    {fieldName + sortDisplayArrow}
+                  </div>
+                );
+              })}
             </div>
 
             {/* Item Rows */}
