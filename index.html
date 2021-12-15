@@ -92,14 +92,16 @@
               justifyContent: "center",
             }}
           >
+            {/* Counter */}
+            <p style={{ flex: 1, textAlign: "center" }}>{`${
+              currentSelectedIndex + 1
+            } / ${selectedIndices.length}`}</p>
+
             {/* FlashCard Section */}
             <div>
               <button onClick={() => setShowFlashcard(!showFlashcard)}>
                 {(showFlashcard ? "Hide" : "Show") + " Flashcard"}
               </button>
-              <p style={{ flex: 1, textAlign: "center" }}>{`${
-                currentSelectedIndex + 1
-              } / ${selectedIndices.length}`}</p>
               {!!showFlashcard && (
                 <FlashCard
                   item={vocab[selectedIndices[currentSelectedIndex]]}
