@@ -7,5 +7,5 @@ TODO
 [X] show index again
 [X] put back End and Begin nav buttons
 [X] click on any row to select that row index
-[ ] clear All filters button
-[ ] filter AND logic
+[X] clear All filters button
+[X] filter AND logic
