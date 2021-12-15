@@ -12,11 +12,18 @@
   <body>
     <div id="root"></div>
     <script type="text/babel">
+      /** Spacing */
+      const spacing = {
+        small: 8,
+        medium: 16,
+        large: 24,
+      };
+
       /** Main component */
       const Main = (props) => {
         // state
         const [showFlashcard, setShowFlashcard] = React.useState(true);
-        const [showVocabList, setShowVocabList] = React.useState(false);
+        const [showVocabList, setShowVocabList] = React.useState(true);
         const [fields, setFields] = React.useState([]); // data field names
         const [vocab, setVocab] = React.useState([]); // data items
         const [sortField, setSortField] = React.useState(""); // field to sort on
@@ -25,6 +32,7 @@
         const [currentSelectedIndex, setCurrentSelectedIndex] =
           React.useState(0); // current index into selected indices
         const [fieldFilters, setFieldFilters] = React.useState(undefined);
+        const [masterFilter, setMasterFilter] = React.useState("");
 
         // load Latin vocab CSV file at startup
         React.useEffect(() => {
@@ -73,18 +81,31 @@
                 if (valueA > valueB) return sortDirection === "ASC" ? 1 : -1;
                 return 0;
               });
-          // FILTER!
-          const filteredIndices =
+          // APPLY MASTER FILTER!
+          const masterFilteredIndices = !masterFilter
+            ? sortedIndices
+            : sortedIndices.filter((index) => {
+                const item = vocab[index];
+                return filterWithMasterFilter(item, fields, masterFilter);
+              });
+          // APPLY FIELD FILTERS!
+          const fieldFilteredIndices =
             activeFieldFilterCount(fieldFilters) <= 0
-              ? sortedIndices
-              : sortedIndices.filter((selectedIndex) => {
-                  const item = vocab[selectedIndex];
-                  return filterItem(item, fields, fieldFilters);
+              ? masterFilteredIndices
+              : masterFilteredIndices.filter((index) => {
+                  const item = vocab[index];
+                  return filterWithFieldFilters(item, fields, fieldFilters);
                 });
 
           setCurrentSelectedIndex(0);
-          setSelectedIndices(filteredIndices);
-        }, [vocab.length, sortField, sortDirection, fieldFilters]);
+          setSelectedIndices(fieldFilteredIndices);
+        }, [
+          vocab.length,
+          sortField,
+          sortDirection,
+          masterFilter,
+          fieldFilters,
+        ]);
 
         // render page content!
         return (
@@ -138,7 +159,7 @@
             <div>
               <button
                 onClick={() => setShowVocabList(!showVocabList)}
-                style={{ marginBottom: 10 }}
+                style={{ marginBottom: spacing.small }}
               >
                 {(showVocabList ? "Hide" : "Show") + " Vocab List"}
               </button>
@@ -155,6 +176,8 @@
                   setSortDirection={setSortDirection}
                   fieldFilters={fieldFilters}
                   setFieldFilters={setFieldFilters}
+                  masterFilter={masterFilter}
+                  setMasterFilter={setMasterFilter}
                 />
               )}
             </div>
@@ -265,6 +288,8 @@
           setSortDirection,
           fieldFilters,
           setFieldFilters,
+          masterFilter,
+          setMasterFilter,
         } = props;
 
         // cell styles
@@ -292,6 +317,23 @@
         // render
         return (
           <div style={{ display: "flex", flexDirection: "column" }}>
+            {/* Master Filter */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                marginTop: spacing.large,
+                marginBottom: spacing.large,
+              }}
+            >
+              <input
+                type="text"
+                placeholder="Master Filter"
+                value={masterFilter}
+                onChange={(event) => setMasterFilter(event.target.value)}
+              />
+            </div>
+
             {/* Header Row */}
             <div
               style={{
@@ -351,9 +393,10 @@
                     <input
                       style={{
                         width: "100%",
-                        marginRight: 10,
+                        marginRight: spacing.small,
                       }}
                       type="text"
+                      placeholder="Filter"
                       value={!!fieldFilters ? fieldFilters[fieldIndex] : ""}
                       onChange={(event) =>
                         setFieldFilters(
@@ -424,8 +467,8 @@
             {...props}
             style={{
               ...props.style,
-              margin: 10,
-              padding: 10,
+              margin: spacing.small,
+              padding: spacing.small,
               fontSize: 20,
             }}
           >
@@ -504,8 +547,25 @@
         return Array(fields.length).fill("");
       }
 
-      /** Return true if the item is included; false if the item is filtered out */
-      function filterItem(item, fields, fieldFilters) {
+      /**
+       * Given a master filter value, return true if the item is included;
+       * false if the item is filtered out.
+       */
+      function filterWithMasterFilter(item, fields, masterFilter) {
+        for (const fieldName of fields) {
+          const normalizedFieldValue = normalizeString(item[fieldName]);
+          if (normalizedFieldValue.includes(masterFilter.toLowerCase())) {
+            return true; // a field matched; include this item!
+          }
+        }
+        return false; // no fields matched
+      }
+
+      /**
+       * Given field filters, return true if the item is included;
+       * false if the item is filtered out.
+       */
+      function filterWithFieldFilters(item, fields, fieldFilters) {
         for (let xa = 0; xa < fields.length; ++xa) {
           const filterValue = fieldFilters[xa];
           if (!filterValue) {

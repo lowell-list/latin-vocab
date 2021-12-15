@@ -9,3 +9,4 @@ TODO
 [X] click on any row to select that row index
 [X] clear All filters button
 [X] filter AND logic
+[X] master filter
