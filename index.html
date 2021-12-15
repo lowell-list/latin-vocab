@@ -265,9 +265,8 @@
         // cell styles
         const cellStyles = {
           rowFilter: {
+            display: "flex",
             flex: 1,
-            minWidth: 5,
-            marginRight: 5,
           },
           rowHeader: {
             flex: 1,
@@ -292,35 +291,6 @@
         // render
         return (
           <div style={{ display: "flex", flexDirection: "column" }}>
-            {/* Filter Row */}
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-              }}
-            >
-              {fields.map((fieldName, fieldIndex) => {
-                return (
-                  <input
-                    key={fieldIndex}
-                    style={{
-                      ...cellStyles.rowFilter,
-                      ...cellStyles[fieldName],
-                    }}
-                    type="text"
-                    value={fieldFilters[fieldIndex]}
-                    onChange={(event) =>
-                      setFieldFilters(
-                        Object.assign([], fieldFilters, {
-                          [fieldIndex]: event.target.value,
-                        })
-                      )
-                    }
-                  />
-                );
-              })}
-            </div>
-
             {/* Header Row */}
             <div
               style={{
@@ -355,6 +325,42 @@
                     }}
                   >
                     {fieldName + sortDisplayArrow}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Filter Row */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+              }}
+            >
+              {fields.map((fieldName, fieldIndex) => {
+                return (
+                  <div
+                    key={fieldIndex}
+                    style={{
+                      ...cellStyles.rowFilter,
+                      ...cellStyles[fieldName],
+                    }}
+                  >
+                    <input
+                      style={{
+                        width: "100%",
+                        marginRight: 10,
+                      }}
+                      type="text"
+                      value={!!fieldFilters ? fieldFilters[fieldIndex] : ""}
+                      onChange={(event) =>
+                        setFieldFilters(
+                          Object.assign([], fieldFilters, {
+                            [fieldIndex]: event.target.value,
+                          })
+                        )
+                      }
+                    />
                   </div>
                 );
               })}
