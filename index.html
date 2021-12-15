@@ -31,7 +31,7 @@
           const url = "./Latin Vocabulary - Vocab.csv";
           fetch(url)
             .then(function (response) {
-              console.log(url + " -> " + response.ok);
+              console.log("loaded " + url + " -> " + response.ok);
               if (response.ok) {
                 return response.text();
               }
@@ -45,7 +45,8 @@
                 setVocab(results.data);
                 setFields(results.meta.fields);
                 setSortField(results.meta.fields[0]);
-                setFieldFilters(Array(results.meta.fields.length).fill(""));
+                setFieldFilters(makeDefaultFieldFilters(results.meta.fields));
+                console.log("parsed and stored vocab data");
               }.bind(this)
             )
             .catch(function (err) {
@@ -266,18 +267,14 @@
 
         // cell styles
         const cellStyles = {
-          rowFilter: {
+          rowCell: {
             display: "flex",
             flex: 1,
           },
-          rowHeader: {
-            flex: 1,
+          link: {
             cursor: "pointer",
             color: "blue",
             textDecoration: "underline",
-          },
-          rowItem: {
-            flex: 1,
           },
           selectedSort: {
             fontWeight: "bold",
@@ -311,7 +308,8 @@
                   <div
                     key={fieldIndex}
                     style={{
-                      ...cellStyles.rowHeader,
+                      ...cellStyles.rowCell,
+                      ...cellStyles.link,
                       ...cellStyles[fieldName],
                       ...(isSortField ? cellStyles.selectedSort : {}),
                     }}
@@ -344,7 +342,7 @@
                   <div
                     key={fieldIndex}
                     style={{
-                      ...cellStyles.rowFilter,
+                      ...cellStyles.rowCell,
                       ...cellStyles[fieldName],
                     }}
                   >
@@ -367,6 +365,18 @@
                 );
               })}
             </div>
+            {activeFieldFilterCount(fieldFilters) > 0 && (
+              <div
+                style={{
+                  ...cellStyles.link,
+                  display: "flex",
+                  flexDirection: "row",
+                }}
+                onClick={() => setFieldFilters(makeDefaultFieldFilters(fields))}
+              >
+                {`Clear all ${activeFieldFilterCount(fieldFilters)} filter(s)`}
+              </div>
+            )}
 
             {/* Item Rows */}
             {selectedIndices.map((selectedIndex, displayIndex) => {
@@ -389,7 +399,7 @@
                     <div
                       key={fieldIndex}
                       style={{
-                        ...cellStyles.rowItem,
+                        ...cellStyles.rowCell,
                         ...cellStyles[fieldName],
                       }}
                     >
@@ -485,6 +495,11 @@
           }
           return counter;
         }, 0);
+      }
+
+      /** Return the default field filters array */
+      function makeDefaultFieldFilters(fields) {
+        return Array(fields.length).fill("");
       }
 
       /** Return true if the item is included; false if the item is filtered out */
