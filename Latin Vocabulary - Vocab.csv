@@ -49,8 +49,7 @@ Page Number,"Part of Speech, Declension, Gender, etc.",Latin,English,Special
 31,v,vidētis,see (you pl),
 36,"n, 3","dux, ducis",leader,
 36,"n, 3","homō, hominis",man,
-36,"n, 3","imperātor, imperātōris","commander in chief, general","Sometimes emperor
-"
+36,"n, 3","imperātor, imperātōris","commander in chief, general, emperor",
 36,"n, 3","lēx, lēgis",law,
 36,"n, 3","lūx, lūcis",light,
 36,"n, 3","rēx, rēgis",king,
@@ -69,7 +68,7 @@ Page Number,"Part of Speech, Declension, Gender, etc.",Latin,English,Special
 44,,certē,certainly,
 44,"n, 3, m","collis, collis",hill,
 44,"n, 3, f","gēns, gentis",tribe,
-44,"n, 3","hostis, hostis",enemy (in war),
+44,"n, 3","hostis, hostis",enemy (in war),"Declined like pars; usually masculine, but could be feminine"
 44,,ita,"thus, so (yes)",
 44,,minimē,"least of all, by no means",
 44,"n, 3","pars, partis",part,
@@ -193,12 +192,54 @@ Page Number,"Part of Speech, Declension, Gender, etc.",Latin,English,Special
 120,"v, 2, tr",moneō,"warn, advise",
 120,"v, 2, tr",terreō,terrify,
 120,"v, 2, tr","timeō, timēre, timuī",fear,
-125,pro,"ego, meī",I,
-125,pro,"nōs, nostrī",we,
-125,"v, 2, tr","video, videre, vidi, visus",see,
+125,pro,"ego, meī","I, of me",
+125,pro,"nōs, nostrī","we, of us",
+125,"v, 2, tr","videō, vidēre, vīdī, vīsus",see,
 125,adv,saepe,often,
-128,pro,"tū, tuī",you,singular
-128,pro,"vōs, vestrī",you,plural
+128,pro,"tū, tuī","you, of you",singular
+128,pro,"vōs, vestrī","y'all, of y'all",plural
 128,"v, 2, tr","teneo, tenere, tenui, tentus",hold,
 128,adv,tamen,nevertheless,
 128,conj,neque,"nor, and...not",
+128,"v, 2, tr.","moveō, movēre, mōvī, mōtus",move,
+129,prep,sī,if,
+129,"adj, 1+2","vērus, a, um",true,
+133,pro,"is, ea, id","he, she, it",
+133,"v, 2, tr","sustineō, sustinēre, sustinī, sustentus","sustain, withstand",
+133,"n, 3, m","finēs, fīnium",territory,
+135,"n, 1","āla, ae",wing,
+137,pro,suī,"himself, herself, itself, themselves",
+137,adv,etiam,also,
+137,conj,enim,for,postposetive
+138,"n, 3","ōrātor, ōrātōris",an orator,
+138,prep,dē,concerning,with ablative
+140,"v, 3, tr","dūcō, dūcere, dūxī, ductus","lead, guide",
+140,"v, 3, tr","gerō, gerere, gessī, gestus","carry, carry on, wage (with bellum)",
+141,"v, 3, tr","dēfendō, dēfendere, dēfendī, dēfēnsus",defend,
+141,"v, 3, tr","īnstruō, īnstruere, īnstrūxī, īnstrūctus","draw up, equip",
+141,"v, 3, tr","mittō, mittere, mīsī, missus",send,
+141,adv,fortiter,"bravely, strongly",
+143,"v, 3, tr","vincō, vincere, vīcī, victus",conquer,
+143,"v, 3, tr","petō, petere, petīvī, petītus","seek, beg, request",
+143,"v, 3, tr","pellō, pellere, pepulī, pulsus","drive, repulse, rout",
+143,"n, 1","litterae, litterārum","letter (i.e., an epistle), dispatch",plural
+145,"v, 3, tr","pōnō, pōnere, posuī, positus","put, place, set, pitch (w. castra)",
+145,"v, 3, intr","contendō, contendere, contendī","strive, contend, hasten",has no fourth principal part
+145,"v, 3, tr","agō, agere, ēgī, āctus","drive, do, act, treat",Not a helping verb
+145,adv,ibi,there,
+145,prep. w. abl.,dē,"concerning, about",
+147,"v, 4, tr",audiō,hear,
+147,"v, 4, tr",mūniō,"fortify, construct (w. viam or viās)",
+147,"v, 4, intr","veniō, venīre, vēnī, ventum",come,
+147,"v, 4, intr","coveniō, covenīre, covēnī, coventum","come together, assemble",
+147,prep. w. abl.,per,through,
+151,"v, intr","sum, esse, fuī, futūrus",am,
+151,adv.,undique,"from all sides, on all sides",
+151,"n, 2, n","tēlum, ī",dart,
+153,intr,"absum, abesse, āfuī, āfutūrus","am away, am distant",ab (ā) w. abl.; like sum; read note on page 153
+153,adv.,longē,"far, by far",
+156,"v, 1, tr.",collocō,"place, station",
+156,"v, 2, intr.","maneō, manēre, mānsī, mānsūrus",remain,
+156,"v, 2, tr.","compleō, complēre, complēvī, complētus",fill (with),w. abl.; see note on page 156
+156,"v, 3, intr.","cēdō, cēdere, cessī, cessūrus","give away, yield",
+156,conj.,atque (ac),and,
